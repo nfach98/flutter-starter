@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:starter/presentation/router/app_router.dart';
 
 class ListScreen extends StatefulWidget {
   const ListScreen({super.key});
@@ -8,12 +9,6 @@ class ListScreen extends StatefulWidget {
 }
 
 class _ListScreenState extends State<ListScreen> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() => _counter++);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,23 +17,12 @@ class _ListScreenState extends State<ListScreen> {
         title: const Text('Home'),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+        child: FilledButton(
+          onPressed: () {
+            Navigator.pushNamed(context, AppRouter.detail);
+          },
+          child: const Text('Detail'),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }
