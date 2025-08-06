@@ -1,6 +1,6 @@
 import 'package:go_router/go_router.dart';
-import 'package:starter/presentation/screens/detail_screen.dart';
-import 'package:starter/presentation/screens/list_screen.dart';
+import 'package:starter/screens/detail_screen.dart';
+import 'package:starter/screens/list_screen.dart';
 
 class AppRouter {
   static const String list = 'list';
