@@ -7,11 +7,13 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appRouter = AppRouter();
+
     return MaterialApp.router(
       title: 'Starter',
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
-      routerConfig: AppRouter.router,
+      routerConfig: appRouter.config(),
     );
   }
 }

@@ -1,7 +1,8 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:starter/presentation/router/app_router.dart';
+import 'package:starter/presentation/router/app_router.gr.dart';
 
+@RoutePage()
 class ListScreen extends StatefulWidget {
   const ListScreen({super.key});
 
@@ -20,7 +21,7 @@ class _ListScreenState extends State<ListScreen> {
       body: Center(
         child: FilledButton(
           onPressed: () {
-            context.pushNamed(AppRouter.detail);
+            context.pushRoute(const DetailRoute());
           },
           child: const Text('Detail'),
         ),

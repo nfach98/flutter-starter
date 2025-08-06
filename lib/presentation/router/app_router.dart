@@ -1,23 +1,11 @@
-import 'package:go_router/go_router.dart';
-import 'package:starter/presentation/screens/detail_screen.dart';
-import 'package:starter/presentation/screens/list_screen.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:starter/presentation/router/app_router.gr.dart';
 
-class AppRouter {
-  static const String list = 'list';
-  static const String detail = 'detail';
-
-  static final GoRouter router = GoRouter(
-    routes: [
-      GoRoute(
-        path: '/',
-        name: list,
-        builder: (_, __) => const ListScreen(),
-      ),
-      GoRoute(
-        path: '/detail',
-        name: detail,
-        builder: (_, __) => const DetailScreen(),
-      ),
-    ],
-  );
+@AutoRouterConfig()
+class AppRouter extends RootStackRouter {
+  @override
+  List<AutoRoute> get routes => [
+        AutoRoute(page: ListRoute.page, initial: true),
+        AutoRoute(page: DetailRoute.page),
+      ];
 }
