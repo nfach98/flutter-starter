@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:starter/presentation/router/app_router.dart';
 
 class ListScreen extends StatefulWidget {
@@ -19,7 +20,7 @@ class _ListScreenState extends State<ListScreen> {
       body: Center(
         child: FilledButton(
           onPressed: () {
-            Navigator.pushNamed(context, AppRouter.detail);
+            context.pushNamed(AppRouter.detail);
           },
           child: const Text('Detail'),
         ),
