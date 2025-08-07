@@ -10,6 +10,9 @@ class DioClient {
       baseUrl: ApiEndpoints.baseUrl,
       connectTimeout: const Duration(seconds: 5),
       receiveTimeout: const Duration(seconds: 5),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     );
     _dio = Dio(options);
     _dio.interceptors.add(ApiInterceptor());
