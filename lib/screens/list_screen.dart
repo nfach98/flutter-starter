@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:starter/features/post/data/models/post_model.dart';
-import 'package:starter/features/post/presentation/widgets/post_item.dart';
+import 'package:starter/models/post.dart';
+import 'package:starter/network/post_repository.dart';
+import 'package:starter/widgets/post_item.dart';
 
 class ListScreen extends StatefulWidget {
   const ListScreen({super.key});
@@ -10,7 +11,7 @@ class ListScreen extends StatefulWidget {
 }
 
 class _ListScreenState extends State<ListScreen> {
-  final _posts = <PostModel>[];
+  final _posts = <Post>[];
   bool _isLoading = false;
 
   @override
