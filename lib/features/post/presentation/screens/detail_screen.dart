@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:starter/models/post.dart';
-import 'package:starter/network/post_repository.dart';
+import 'package:starter/features/post/data/models/post_model.dart';
+import 'package:starter/features/post/data/repositories/post_repository_impl.dart';
 
 class DetailScreen extends StatefulWidget {
   const DetailScreen({super.key, this.id});
@@ -12,7 +12,7 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
-  Post? _post;
+  PostModel? _post;
   bool _isLoading = false;
 
   @override

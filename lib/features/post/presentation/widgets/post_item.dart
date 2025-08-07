@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:starter/models/post.dart';
+import 'package:starter/features/post/data/models/post_model.dart';
 import 'package:starter/router/app_router.dart';
 
 class PostItem extends StatelessWidget {
   const PostItem({super.key, this.post});
 
-  final Post? post;
+  final PostModel? post;
 
   @override
   Widget build(BuildContext context) {
