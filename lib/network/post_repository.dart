@@ -3,8 +3,12 @@ import 'package:starter/network/api_endpoints.dart';
 import 'package:starter/network/dio_client.dart';
 
 class PostRepository {
-  static Future<List<Post>> getPosts() async {
-    final response = await DioClient.get(ApiEndpoints.posts);
+  final DioClient dio;
+
+  PostRepository({required this.dio});
+
+  Future<List<Post>> getPosts() async {
+    final response = await dio.get(ApiEndpoints.posts);
 
     if (response.statusCode == 200) {
       try {
@@ -18,8 +22,8 @@ class PostRepository {
     }
   }
 
-  static Future<Post> getPostDetail(int id) async {
-    final response = await DioClient.get('${ApiEndpoints.posts}/$id');
+  Future<Post> getPostDetail(int id) async {
+    final response = await dio.get('${ApiEndpoints.posts}/$id');
 
     if (response.statusCode == 200) {
       try {

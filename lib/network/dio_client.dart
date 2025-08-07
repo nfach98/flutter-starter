@@ -3,17 +3,19 @@ import 'package:starter/network/api_endpoints.dart';
 import 'package:starter/network/api_interceptor.dart';
 
 class DioClient {
-  static final _dio = Dio(_getOptions())..interceptors.add(ApiInterceptor());
+  late final Dio _dio;
 
-  static BaseOptions _getOptions() {
-    return BaseOptions(
+  DioClient() {
+    final options = BaseOptions(
       baseUrl: ApiEndpoints.baseUrl,
       connectTimeout: const Duration(seconds: 5),
       receiveTimeout: const Duration(seconds: 5),
     );
+    _dio = Dio(options);
+    _dio.interceptors.add(ApiInterceptor());
   }
 
-  static Future<Response> get(
+  Future<Response> get(
     String url, {
     Map<String, dynamic>? queryParameters,
     Map<String, dynamic>? body,
@@ -26,7 +28,7 @@ class DioClient {
     return response;
   }
 
-  static Future<Response> put(
+  Future<Response> put(
     String url, {
     Map<String, dynamic>? queryParameters,
     Map<String, dynamic>? body,
@@ -39,7 +41,7 @@ class DioClient {
     return response;
   }
 
-  static Future<Response> post(
+  Future<Response> post(
     String url, {
     Map<String, dynamic>? queryParameters,
     Map<String, dynamic>? body,
@@ -52,7 +54,7 @@ class DioClient {
     return response;
   }
 
-  static Future<Response> delete(
+  Future<Response> delete(
     String url, {
     Map<String, dynamic>? queryParameters,
     Map<String, dynamic>? body,
