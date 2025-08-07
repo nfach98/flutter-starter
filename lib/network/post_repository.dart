@@ -5,7 +5,7 @@ import 'package:starter/models/post.dart';
 import 'package:starter/network/api_endpoints.dart';
 
 class PostRepository {
-  static Future<List<Post>> getPosts() async {
+  Future<List<Post>> getPosts() async {
     final response = await get(
       Uri.parse(ApiEndpoints.posts),
       headers: {
@@ -26,7 +26,7 @@ class PostRepository {
     }
   }
 
-  static Future<Post> getPostDetail(int id) async {
+  Future<Post> getPostDetail(int id) async {
     final response = await get(
       Uri.parse('${ApiEndpoints.posts}/$id'),
       headers: {
