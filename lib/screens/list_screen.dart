@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:starter/models/post.dart';
 import 'package:starter/network/post_repository.dart';
-import 'package:starter/router/app_router.dart';
+import 'package:starter/widgets/post_item.dart';
 
 class ListScreen extends StatefulWidget {
   const ListScreen({super.key});
@@ -47,13 +46,9 @@ class _ListScreenState extends State<ListScreen> {
   }
 
   Widget _buildList() {
-    final theme = Theme.of(context);
-
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
-    }
-
-    if (_posts.isEmpty) {
+    } else if (_posts.isEmpty) {
       return const Center(child: Text('No todos found'));
     }
 
@@ -61,32 +56,9 @@ class _ListScreenState extends State<ListScreen> {
       onRefresh: () => _getPosts(),
       child: ListView.builder(
         itemCount: _posts.length,
-        itemBuilder: (context, index) {
-          final post = _posts[index];
-
-          return ListTile(
-            title: Text(
-              post.title ?? '',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.titleMedium,
-            ),
-            subtitle: Text(
-              post.body ?? '',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.bodySmall,
-            ),
-            onTap: () {
-              context.pushNamed(
-                AppRouter.detail,
-                pathParameters: {
-                  'id': post.id?.toString() ?? '0',
-                },
-              );
-            },
-          );
-        },
+        itemBuilder: (_, index) => PostItem(
+          post: _posts[index],
+        ),
       ),
     );
   }
