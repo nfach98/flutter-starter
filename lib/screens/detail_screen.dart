@@ -1,17 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:starter/models/post.dart';
+import 'package:starter/network/post_repository.dart';
 
 class DetailScreen extends StatefulWidget {
-  const DetailScreen({super.key});
+  const DetailScreen({super.key, this.id});
+
+  final int? id;
 
   @override
   State<DetailScreen> createState() => _DetailScreenState();
 }
 
 class _DetailScreenState extends State<DetailScreen> {
-  int _counter = 0;
+  Post? _post;
+  bool _isLoading = false;
 
-  void _incrementCounter() {
-    setState(() => _counter++);
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _getPostDetail();
+    });
   }
 
   @override
@@ -21,24 +30,51 @@ class _DetailScreenState extends State<DetailScreen> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('Detail'),
       ),
-      body: Center(
+      body: _buildPostDetail(),
+    );
+  }
+
+  Future<void> _getPostDetail() async {
+    setState(() => _isLoading = true);
+    final result = await PostRepository.getPostDetail(widget.id ?? 0);
+    setState(() {
+      _isLoading = false;
+      _post = result;
+    });
+  }
+
+  Widget _buildPostDetail() {
+    final theme = Theme.of(context);
+
+    if (_isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    } else if (_post == null) {
+      return const Center(
+        child: Text('Post not found'),
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: () => _getPostDetail(),
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(16),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'You have pushed the button this many times:',
-            ),
             Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+              _post?.title ?? '',
+              style: theme.textTheme.titleMedium,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              _post?.body ?? '',
+              style: theme.textTheme.bodyMedium,
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }

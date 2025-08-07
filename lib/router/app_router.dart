@@ -11,7 +11,8 @@ class AppRouter {
       case list:
         return MaterialPageRoute(builder: (_) => const ListScreen());
       case detail:
-        return MaterialPageRoute(builder: (_) => const DetailScreen());
+        final args = settings.arguments as int?;
+        return MaterialPageRoute(builder: (_) => DetailScreen(id: args));
       default:
         return MaterialPageRoute(builder: (_) => const ListScreen());
     }
