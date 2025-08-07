@@ -1,63 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:starter/bloc/list/list_bloc.dart';
+import 'package:starter/bloc/list/list_event.dart';
+import 'package:starter/bloc/list/list_state.dart';
 import 'package:starter/injection/injection.dart';
-import 'package:starter/models/post.dart';
 import 'package:starter/widgets/post_item.dart';
 
-class ListScreen extends StatefulWidget {
+class ListScreen extends StatelessWidget {
   const ListScreen({super.key});
 
   @override
-  State<ListScreen> createState() => _ListScreenState();
-}
-
-class _ListScreenState extends State<ListScreen> {
-  final _posts = <Post>[];
-  bool _isLoading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getPosts();
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    return BlocProvider(
+      create: (_) {
+        final bloc = Injection.listBloc;
+        bloc.add(GetPosts());
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: theme.colorScheme.inversePrimary,
-        title: const Text('List'),
+        return bloc;
+      },
+      child: BlocBuilder<ListBloc, ListState>(
+        builder: (context, state) {
+          final theme = Theme.of(context);
+
+          return Scaffold(
+            appBar: AppBar(
+              backgroundColor: theme.colorScheme.inversePrimary,
+              title: const Text('List'),
+            ),
+            body: _buildList(
+              context: context,
+              state: state,
+            ),
+          );
+        },
       ),
-      body: _buildList(),
     );
   }
 
-  Future<void> _getPosts() async {
-    setState(() => _isLoading = true);
-    final result = await Injection.postRepository.getPosts();
-    setState(() {
-      _isLoading = false;
-      _posts.clear();
-      _posts.addAll(result);
-    });
-  }
+  Widget _buildList({
+    required BuildContext context,
+    required ListState state,
+  }) {
+    final isLoading = state.isLoading;
+    final posts = state.posts;
 
-  Widget _buildList() {
-    if (_isLoading) {
+    final bloc = BlocProvider.of<ListBloc>(context);
+
+    if (isLoading) {
       return const Center(child: CircularProgressIndicator());
-    } else if (_posts.isEmpty) {
+    } else if (posts.isEmpty) {
       return const Center(child: Text('No todos found'));
     }
 
     return RefreshIndicator(
-      onRefresh: () => _getPosts(),
+      onRefresh: () async => bloc.add(GetPosts()),
       child: ListView.builder(
-        itemCount: _posts.length,
+        itemCount: posts.length,
         itemBuilder: (_, index) => PostItem(
-          post: _posts[index],
+          post: posts[index],
         ),
       ),
     );

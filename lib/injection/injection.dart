@@ -12,8 +12,16 @@
 // )
 // Future<void> configureDependencies() async => $initGetIt(getIt);
 
+import 'package:starter/bloc/detail/detail_bloc.dart';
+import 'package:starter/bloc/list/list_bloc.dart';
 import 'package:starter/network/post_repository.dart';
 
 class Injection {
-  static final postRepository = PostRepository();
+  static final _postRepository = PostRepository();
+  static final listBloc = ListBloc(
+    postRepository: _postRepository,
+  );
+  static final detailBloc = DetailBloc(
+    postRepository: _postRepository,
+  );
 }

@@ -1,63 +1,66 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:starter/bloc/detail/detail_bloc.dart';
+import 'package:starter/bloc/detail/detail_event.dart';
+import 'package:starter/bloc/detail/detail_state.dart';
 import 'package:starter/injection/injection.dart';
-import 'package:starter/models/post.dart';
 
-class DetailScreen extends StatefulWidget {
+class DetailScreen extends StatelessWidget {
   const DetailScreen({super.key, this.id});
 
   final int? id;
 
   @override
-  State<DetailScreen> createState() => _DetailScreenState();
-}
-
-class _DetailScreenState extends State<DetailScreen> {
-  Post? _post;
-  bool _isLoading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getPostDetail();
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('Detail'),
+    return BlocProvider(
+      create: (_) {
+        final bloc = Injection.detailBloc;
+        bloc.add(GetPostDetail(id ?? 0));
+
+        return bloc;
+      },
+      child: BlocBuilder<DetailBloc, DetailState>(
+        builder: (context, state) {
+          final theme = Theme.of(context);
+
+          return Scaffold(
+            appBar: AppBar(
+              backgroundColor: theme.colorScheme.inversePrimary,
+              title: const Text('Detail'),
+            ),
+            body: _buildPostDetail(
+              context: context,
+              state: state,
+            ),
+          );
+        },
       ),
-      body: _buildPostDetail(),
     );
   }
 
-  Future<void> _getPostDetail() async {
-    setState(() => _isLoading = true);
-    final result = await Injection.postRepository.getPostDetail(widget.id ?? 0);
-    setState(() {
-      _isLoading = false;
-      _post = result;
-    });
-  }
-
-  Widget _buildPostDetail() {
+  Widget _buildPostDetail({
+    required BuildContext context,
+    required DetailState state,
+  }) {
     final theme = Theme.of(context);
+    final bloc = BlocProvider.of<DetailBloc>(context);
+    final isLoading = state.isLoading;
+    final post = state.post;
 
-    if (_isLoading) {
+    if (isLoading) {
       return const Center(
         child: CircularProgressIndicator(),
       );
-    } else if (_post == null) {
+    } else if (post == null) {
       return const Center(
         child: Text('Post not found'),
       );
     }
 
     return RefreshIndicator(
-      onRefresh: () => _getPostDetail(),
+      onRefresh: () async => bloc.add(
+        GetPostDetail(post.id ?? 0),
+      ),
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(16),
@@ -65,12 +68,12 @@ class _DetailScreenState extends State<DetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              _post?.title ?? '',
+              post.title ?? '',
               style: theme.textTheme.titleMedium,
             ),
             const SizedBox(height: 10),
             Text(
-              _post?.body ?? '',
+              post.body ?? '',
               style: theme.textTheme.bodyMedium,
             ),
           ],
