@@ -14,9 +14,11 @@ class AppRouter {
         builder: (_, __) => const ListScreen(),
       ),
       GoRoute(
-        path: '/detail',
+        path: '/detail/:id',
         name: detail,
-        builder: (_, __) => const DetailScreen(),
+        builder: (_, state) => DetailScreen(
+          id: int.tryParse(state.pathParameters['id'] ?? ''),
+        ),
       ),
     ],
   );

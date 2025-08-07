@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:starter/models/post.dart';
 import 'package:starter/network/post_repository.dart';
 import 'package:starter/router/app_router.dart';
@@ -11,7 +12,6 @@ class ListScreen extends StatefulWidget {
 }
 
 class _ListScreenState extends State<ListScreen> {
-  final _postRepository = PostRepository();
   final _posts = <Post>[];
   bool _isLoading = false;
 
@@ -38,7 +38,7 @@ class _ListScreenState extends State<ListScreen> {
 
   Future<void> _getPosts() async {
     setState(() => _isLoading = true);
-    final result = await _postRepository.getPosts();
+    final result = await PostRepository.getPosts();
     setState(() {
       _isLoading = false;
       _posts.clear();
@@ -62,23 +62,28 @@ class _ListScreenState extends State<ListScreen> {
       child: ListView.builder(
         itemCount: _posts.length,
         itemBuilder: (context, index) {
-          final todo = _posts[index];
+          final post = _posts[index];
 
           return ListTile(
             title: Text(
-              todo.title ?? '',
+              post.title ?? '',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: theme.textTheme.titleMedium,
             ),
             subtitle: Text(
-              todo.body ?? '',
+              post.body ?? '',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: theme.textTheme.bodySmall,
             ),
             onTap: () {
-              Navigator.pushNamed(context, AppRouter.detail);
+              context.pushNamed(
+                AppRouter.detail,
+                pathParameters: {
+                  'id': post.id?.toString() ?? '0',
+                },
+              );
             },
           );
         },
