@@ -2,7 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:starter/models/post.dart';
 import 'package:starter/network/post_repository.dart';
-import 'package:starter/router/app_router.gr.dart';
+import 'package:starter/widgets/post_item.dart';
 
 @RoutePage()
 class ListScreen extends StatefulWidget {
@@ -13,7 +13,6 @@ class ListScreen extends StatefulWidget {
 }
 
 class _ListScreenState extends State<ListScreen> {
-  final _postRepository = PostRepository();
   final _posts = <Post>[];
   bool _isLoading = false;
 
@@ -40,7 +39,7 @@ class _ListScreenState extends State<ListScreen> {
 
   Future<void> _getPosts() async {
     setState(() => _isLoading = true);
-    final result = await _postRepository.getPosts();
+    final result = await PostRepository.getPosts();
     setState(() {
       _isLoading = false;
       _posts.clear();
@@ -49,13 +48,9 @@ class _ListScreenState extends State<ListScreen> {
   }
 
   Widget _buildList() {
-    final theme = Theme.of(context);
-
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
-    }
-
-    if (_posts.isEmpty) {
+    } else if (_posts.isEmpty) {
       return const Center(child: Text('No todos found'));
     }
 
@@ -63,27 +58,9 @@ class _ListScreenState extends State<ListScreen> {
       onRefresh: () => _getPosts(),
       child: ListView.builder(
         itemCount: _posts.length,
-        itemBuilder: (context, index) {
-          final todo = _posts[index];
-
-          return ListTile(
-            title: Text(
-              todo.title ?? '',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.titleMedium,
-            ),
-            subtitle: Text(
-              todo.body ?? '',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.bodySmall,
-            ),
-            onTap: () {
-              context.pushRoute(const DetailRoute());
-            },
-          );
-        },
+        itemBuilder: (_, index) => PostItem(
+          post: _posts[index],
+        ),
       ),
     );
   }
