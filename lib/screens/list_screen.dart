@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:starter/injection/injection.dart';
 import 'package:starter/models/post.dart';
-import 'package:starter/network/post_repository.dart';
 import 'package:starter/widgets/post_item.dart';
 
 class ListScreen extends StatefulWidget {
@@ -37,7 +37,7 @@ class _ListScreenState extends State<ListScreen> {
 
   Future<void> _getPosts() async {
     setState(() => _isLoading = true);
-    final result = await PostRepository.getPosts();
+    final result = await Injection.postRepository.getPosts();
     setState(() {
       _isLoading = false;
       _posts.clear();

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:starter/injection/injection.dart';
 import 'package:starter/models/post.dart';
-import 'package:starter/network/post_repository.dart';
 
 class DetailScreen extends StatefulWidget {
   const DetailScreen({super.key, this.id});
@@ -36,7 +36,7 @@ class _DetailScreenState extends State<DetailScreen> {
 
   Future<void> _getPostDetail() async {
     setState(() => _isLoading = true);
-    final result = await PostRepository.getPostDetail(widget.id ?? 0);
+    final result = await Injection.postRepository.getPostDetail(widget.id ?? 0);
     setState(() {
       _isLoading = false;
       _post = result;
