@@ -1,26 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:starter/injection/injection.dart';
-import 'package:starter/models/post.dart';
-import 'package:starter/network/post_repository.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:starter/riverpod/detail_notifier.dart';
 
-class DetailScreen extends StatefulWidget {
+class DetailScreen extends ConsumerStatefulWidget {
   const DetailScreen({super.key, this.id});
 
   final int? id;
 
   @override
-  State<DetailScreen> createState() => _DetailScreenState();
+  ConsumerState<DetailScreen> createState() => _DetailScreenState();
 }
 
-class _DetailScreenState extends State<DetailScreen> {
-  Post? _post;
-  bool _isLoading = false;
-
+class _DetailScreenState extends ConsumerState<DetailScreen> {
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getPostDetail();
+      ref.read(detailNotifierProvider.notifier).fetchPostDetail(widget.id ?? 0);
     });
   }
 
@@ -35,48 +31,47 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 
-  Future<void> _getPostDetail() async {
-    setState(() => _isLoading = true);
-    final result = await getIt<PostRepository>().getPostDetail(widget.id ?? 0);
-    setState(() {
-      _isLoading = false;
-      _post = result;
-    });
-  }
-
   Widget _buildPostDetail() {
     final theme = Theme.of(context);
+    final value = ref.watch(detailNotifierProvider);
+    final notifier = ref.read(detailNotifierProvider.notifier);
 
-    if (_isLoading) {
-      return const Center(
+    return value.when(
+      loading: () => const Center(
         child: CircularProgressIndicator(),
-      );
-    } else if (_post == null) {
-      return const Center(
-        child: Text('Post not found'),
-      );
-    }
-
-    return RefreshIndicator(
-      onRefresh: () => _getPostDetail(),
-      child: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              _post?.title ?? '',
-              style: theme.textTheme.titleMedium,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              _post?.body ?? '',
-              style: theme.textTheme.bodyMedium,
-            ),
-          ],
-        ),
       ),
+      error: (error, stack) => const Center(
+        child: Text('Post not found'),
+      ),
+      data: (post) {
+        if (post == null) {
+          return const Center(
+            child: Text('Post not found'),
+          );
+        }
+
+        return RefreshIndicator(
+          onRefresh: () => notifier.fetchPostDetail(widget.id ?? 0),
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  post.title ?? 'No Title',
+                  style: theme.textTheme.titleMedium,
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  post.body ?? 'No Content',
+                  style: theme.textTheme.bodyMedium,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

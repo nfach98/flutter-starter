@@ -1,9 +1,11 @@
-import 'package:injectable/injectable.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:starter/models/post.dart';
 import 'package:starter/network/api_endpoints.dart';
 import 'package:starter/network/dio_client.dart';
 
-@LazySingleton()
+part 'post_repository.g.dart';
+
 class PostRepository {
   final DioClient dio;
 
@@ -37,4 +39,9 @@ class PostRepository {
       throw Exception('Failed to load post');
     }
   }
+}
+
+@riverpod
+PostRepository postRepository(Ref ref) {
+  return PostRepository(dio: ref.read(dioClientProvider));
 }

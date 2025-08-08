@@ -1,64 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:starter/injection/injection.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:starter/models/post.dart';
-import 'package:starter/network/post_repository.dart';
 import 'package:starter/widgets/post_item.dart';
+import 'package:starter/riverpod/list_notifier.dart';
 
-class ListScreen extends StatefulWidget {
+class ListScreen extends ConsumerWidget {
   const ListScreen({super.key});
 
   @override
-  State<ListScreen> createState() => _ListScreenState();
-}
-
-class _ListScreenState extends State<ListScreen> {
-  final _posts = <Post>[];
-  bool _isLoading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getPosts();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final value = ref.watch(listNotifierProvider);
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: theme.colorScheme.inversePrimary,
         title: const Text('List'),
       ),
-      body: _buildList(),
+      body: value.when(
+        data: (posts) => _buildList(posts, ref),
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, stack) => Center(child: Text('Error: $error')),
+      ),
     );
   }
 
-  Future<void> _getPosts() async {
-    setState(() => _isLoading = true);
-    final result = await getIt<PostRepository>().getPosts();
-    setState(() {
-      _isLoading = false;
-      _posts.clear();
-      _posts.addAll(result);
-    });
-  }
-
-  Widget _buildList() {
-    if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    } else if (_posts.isEmpty) {
+  Widget _buildList(List<Post> posts, WidgetRef ref) {
+    if (posts.isEmpty) {
       return const Center(child: Text('No todos found'));
     }
 
     return RefreshIndicator(
-      onRefresh: () => _getPosts(),
+      onRefresh: () => ref.read(listNotifierProvider.notifier).fetchPosts(),
       child: ListView.builder(
-        itemCount: _posts.length,
+        itemCount: posts.length,
         itemBuilder: (_, index) => PostItem(
-          post: _posts[index],
+          post: posts[index],
         ),
       ),
     );
