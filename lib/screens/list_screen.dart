@@ -13,7 +13,7 @@ class ListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) {
-        final bloc = Injection.listBloc;
+        final bloc = getIt<ListBloc>();
         bloc.add(GetPosts());
 
         return bloc;

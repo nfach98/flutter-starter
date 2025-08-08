@@ -14,7 +14,7 @@ class DetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) {
-        final bloc = Injection.detailBloc;
+        final bloc = getIt<DetailBloc>();
         bloc.add(GetPostDetail(id ?? 0));
 
         return bloc;

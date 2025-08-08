@@ -1,8 +1,10 @@
 import 'package:bloc/bloc.dart';
+import 'package:injectable/injectable.dart';
 import 'package:starter/bloc/list/list_event.dart';
 import 'package:starter/bloc/list/list_state.dart';
 import 'package:starter/network/post_repository.dart';
 
+@injectable
 class ListBloc extends Bloc<ListEvent, ListState> {
   final PostRepository postRepository;
 

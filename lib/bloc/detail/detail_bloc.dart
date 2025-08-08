@@ -1,8 +1,10 @@
 import 'package:bloc/bloc.dart';
+import 'package:injectable/injectable.dart';
 import 'package:starter/bloc/detail/detail_event.dart';
 import 'package:starter/bloc/detail/detail_state.dart';
 import 'package:starter/network/post_repository.dart';
 
+@injectable
 class DetailBloc extends Bloc<DetailEvent, DetailState> {
   final PostRepository postRepository;
 
