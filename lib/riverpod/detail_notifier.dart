@@ -9,9 +9,10 @@ class DetailNotifier extends _$DetailNotifier {
   late PostRepository _postRepository;
 
   @override
-  Future<Post?> build() async {
-    _postRepository = ref.watch(postRepositoryProvider);
+  Future<Post?> build(int id) async {
     state = const AsyncLoading();
+    _postRepository = ref.watch(postRepositoryProvider);
+    fetchPostDetail(id);
     return state.value;
   }
 

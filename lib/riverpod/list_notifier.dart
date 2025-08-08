@@ -10,6 +10,7 @@ class ListNotifier extends _$ListNotifier {
 
   @override
   Future<List<Post>> build() async {
+    state = const AsyncLoading();
     _postRepository = ref.watch(postRepositoryProvider);
     fetchPosts();
     return state.value ?? [];

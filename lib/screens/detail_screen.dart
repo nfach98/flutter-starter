@@ -2,47 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:starter/riverpod/detail_notifier.dart';
 
-class DetailScreen extends ConsumerStatefulWidget {
+class DetailScreen extends ConsumerWidget {
   const DetailScreen({super.key, this.id});
 
   final int? id;
 
   @override
-  ConsumerState<DetailScreen> createState() => _DetailScreenState();
-}
-
-class _DetailScreenState extends ConsumerState<DetailScreen> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(detailNotifierProvider.notifier).fetchPostDetail(widget.id ?? 0);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('Detail'),
       ),
-      body: _buildPostDetail(),
+      body: _buildPostDetail(context, ref),
     );
   }
 
-  Widget _buildPostDetail() {
+  Widget _buildPostDetail(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final value = ref.watch(detailNotifierProvider);
-    final notifier = ref.read(detailNotifierProvider.notifier);
+    final state = ref.watch(detailNotifierProvider(id ?? 0));
+    final notifier = ref.read(detailNotifierProvider(id ?? 0).notifier);
 
-    return value.when(
-      loading: () => const Center(
-        child: CircularProgressIndicator(),
-      ),
-      error: (error, stack) => const Center(
-        child: Text('Post not found'),
-      ),
+    return state.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stack) => Center(child: Text(error.toString())),
       data: (post) {
         if (post == null) {
           return const Center(
@@ -51,7 +34,7 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
         }
 
         return RefreshIndicator(
-          onRefresh: () => notifier.fetchPostDetail(widget.id ?? 0),
+          onRefresh: () => notifier.fetchPostDetail(id ?? 0),
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.all(16),
@@ -59,12 +42,12 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  post.title ?? 'No Title',
+                  post.title ?? '',
                   style: theme.textTheme.titleMedium,
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  post.body ?? 'No Content',
+                  post.body ?? '',
                   style: theme.textTheme.bodyMedium,
                 ),
               ],

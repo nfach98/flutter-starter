@@ -10,14 +10,14 @@ class ListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final value = ref.watch(listNotifierProvider);
+    final state = ref.watch(listNotifierProvider);
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: theme.colorScheme.inversePrimary,
         title: const Text('List'),
       ),
-      body: value.when(
+      body: state.when(
         data: (posts) => _buildList(posts, ref),
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(child: Text('Error: $error')),
