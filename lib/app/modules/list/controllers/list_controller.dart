@@ -1,10 +1,9 @@
 import 'package:get/get_state_manager/get_state_manager.dart';
-import 'package:starter/injection/injection.dart';
 import 'package:starter/app/data/models/post.dart';
-import 'package:starter/network/post_repository.dart';
+import 'package:starter/app/data/repositories/post_repository.dart';
 
 class ListController extends GetxController with StateMixin<List<Post>> {
-  final _postRepository = getIt<PostRepository>();
+  final _postRepository = PostRepository.to;
 
   @override
   void onInit() {

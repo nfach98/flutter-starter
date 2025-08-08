@@ -27,7 +27,7 @@ class PostItem extends StatelessWidget {
       ),
       onTap: () {
         Get.toNamed(
-          Routes.detail,
+          Routes.DETAIL,
           arguments: post?.id,
         );
       },

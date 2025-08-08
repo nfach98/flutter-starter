@@ -1,10 +1,9 @@
 import 'package:get/get.dart';
-import 'package:starter/injection/injection.dart';
 import 'package:starter/app/data/models/post.dart';
-import 'package:starter/network/post_repository.dart';
+import 'package:starter/app/data/repositories/post_repository.dart';
 
 class DetailController extends GetxController with StateMixin<Post> {
-  final _postRepository = getIt<PostRepository>();
+  final _postRepository = PostRepository.to;
   final id = Get.arguments as int? ?? 0;
 
   @override

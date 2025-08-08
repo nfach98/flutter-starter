@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
-import 'package:injectable/injectable.dart';
-import 'package:starter/network/api_endpoints.dart';
-import 'package:starter/network/api_interceptor.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_disposable.dart';
+import 'package:get/instance_manager.dart';
+import 'package:starter/services/network/api_endpoints.dart';
+import 'package:starter/services/network/api_interceptor.dart';
 
-@LazySingleton()
-class DioClient {
+class DioClient extends GetxService {
   late final Dio _dio;
 
   DioClient() {
@@ -19,6 +19,8 @@ class DioClient {
     _dio = Dio(options);
     _dio.interceptors.add(ApiInterceptor());
   }
+
+  static DioClient get to => Get.find();
 
   Future<Response> get(
     String url, {
