@@ -29,24 +29,27 @@ class _ListScreenBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<ListProvider>();
-    final isLoading = provider.isLoading;
-    final posts = provider.posts;
+    return Consumer<ListProvider>(
+      builder: (_, provider, __) {
+        final isLoading = provider.isLoading;
+        final posts = provider.posts;
 
-    if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    } else if (posts.isEmpty) {
-      return const Center(child: Text('No todos found'));
-    }
+        if (isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (posts.isEmpty) {
+          return const Center(child: Text('No todos found'));
+        }
 
-    return RefreshIndicator(
-      onRefresh: () => provider.getPosts(),
-      child: ListView.builder(
-        itemCount: posts.length,
-        itemBuilder: (_, index) => PostItem(
-          post: posts[index],
-        ),
-      ),
+        return RefreshIndicator(
+          onRefresh: () => provider.getPosts(),
+          child: ListView.builder(
+            itemCount: posts.length,
+            itemBuilder: (_, index) => PostItem(
+              post: posts[index],
+            ),
+          ),
+        );
+      },
     );
   }
 }

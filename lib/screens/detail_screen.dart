@@ -19,52 +19,57 @@ class DetailScreen extends StatelessWidget {
           backgroundColor: theme.colorScheme.inversePrimary,
           title: const Text('Detail'),
         ),
-        body: _DetailPost(id),
+        body: _DetailBody(id),
       ),
     );
   }
 }
 
-class _DetailPost extends StatelessWidget {
-  final int? id;
+class _DetailBody extends StatelessWidget {
+  const _DetailBody(this.id);
 
-  const _DetailPost(this.id);
+  final int? id;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final provider = context.watch<DetailProvider>();
+    return Consumer<DetailProvider>(
+      builder: (_, provider, __) {
+        final theme = Theme.of(context);
+        final isLoading = provider.isLoading;
+        final post = provider.post;
 
-    if (provider.isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    } else if (provider.post == null) {
-      return const Center(
-        child: Text('Post not found'),
-      );
-    }
+        if (isLoading) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (post == null) {
+          return const Center(
+            child: Text('Post not found'),
+          );
+        }
 
-    return RefreshIndicator(
-      onRefresh: () => provider.getPostDetail(id ?? 0),
-      child: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              provider.post?.title ?? '',
-              style: theme.textTheme.titleMedium,
+        return RefreshIndicator(
+          onRefresh: () => provider.getPostDetail(id ?? 0),
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  post.title ?? '',
+                  style: theme.textTheme.titleMedium,
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  post.body ?? '',
+                  style: theme.textTheme.bodyMedium,
+                ),
+              ],
             ),
-            const SizedBox(height: 10),
-            Text(
-              provider.post?.body ?? '',
-              style: theme.textTheme.bodyMedium,
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
