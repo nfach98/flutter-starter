@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:starter/injection/injection.dart';
 import 'package:starter/models/post.dart';
+import 'package:starter/network/post_repository.dart';
 import 'package:starter/widgets/post_item.dart';
 
 @RoutePage()
@@ -39,7 +40,7 @@ class _ListScreenState extends State<ListScreen> {
 
   Future<void> _getPosts() async {
     setState(() => _isLoading = true);
-    final result = await Injection.postRepository.getPosts();
+    final result = await getIt<PostRepository>().getPosts();
     setState(() {
       _isLoading = false;
       _posts.clear();
