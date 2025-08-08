@@ -11,19 +11,16 @@
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
-import '../network/dio_client.dart' as _i667;
-
 // initializes the registration of main-scope dependencies inside of GetIt
 _i174.GetIt $initGetIt(
   _i174.GetIt getIt, {
   String? environment,
   _i526.EnvironmentFilter? environmentFilter,
 }) {
-  final gh = _i526.GetItHelper(
+  _i526.GetItHelper(
     getIt,
     environment,
     environmentFilter,
   );
-  gh.lazySingleton<_i667.DioClient>(() => _i667.DioClient());
   return getIt;
 }
