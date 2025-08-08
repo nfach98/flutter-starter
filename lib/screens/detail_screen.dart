@@ -1,64 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:starter/injection/injection.dart';
-import 'package:starter/models/post.dart';
-import 'package:starter/network/post_repository.dart';
+import 'package:starter/providers/detail_provider.dart';
 
-class DetailScreen extends StatefulWidget {
+class DetailScreen extends StatelessWidget {
   const DetailScreen({super.key, this.id});
 
   final int? id;
 
   @override
-  State<DetailScreen> createState() => _DetailScreenState();
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return ChangeNotifierProvider<DetailProvider>(
+      create: (_) => getIt<DetailProvider>()..getPostDetail(id ?? 0),
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: theme.colorScheme.inversePrimary,
+          title: const Text('Detail'),
+        ),
+        body: _DetailPost(id),
+      ),
+    );
+  }
 }
 
-class _DetailScreenState extends State<DetailScreen> {
-  Post? _post;
-  bool _isLoading = false;
+class _DetailPost extends StatelessWidget {
+  final int? id;
 
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getPostDetail();
-    });
-  }
+  const _DetailPost(this.id);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('Detail'),
-      ),
-      body: _buildPostDetail(),
-    );
-  }
-
-  Future<void> _getPostDetail() async {
-    setState(() => _isLoading = true);
-    final result = await getIt<PostRepository>().getPostDetail(widget.id ?? 0);
-    setState(() {
-      _isLoading = false;
-      _post = result;
-    });
-  }
-
-  Widget _buildPostDetail() {
     final theme = Theme.of(context);
+    final provider = context.watch<DetailProvider>();
 
-    if (_isLoading) {
+    if (provider.isLoading) {
       return const Center(
         child: CircularProgressIndicator(),
       );
-    } else if (_post == null) {
+    } else if (provider.post == null) {
       return const Center(
         child: Text('Post not found'),
       );
     }
 
     return RefreshIndicator(
-      onRefresh: () => _getPostDetail(),
+      onRefresh: () => provider.getPostDetail(id ?? 0),
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(16),
@@ -66,12 +54,12 @@ class _DetailScreenState extends State<DetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              _post?.title ?? '',
+              provider.post?.title ?? '',
               style: theme.textTheme.titleMedium,
             ),
             const SizedBox(height: 10),
             Text(
-              _post?.body ?? '',
+              provider.post?.body ?? '',
               style: theme.textTheme.bodyMedium,
             ),
           ],

@@ -13,6 +13,8 @@ import 'package:injectable/injectable.dart' as _i526;
 
 import '../network/dio_client.dart' as _i667;
 import '../network/post_repository.dart' as _i693;
+import '../providers/detail_provider.dart' as _i87;
+import '../providers/list_provider.dart' as _i716;
 
 // initializes the registration of main-scope dependencies inside of GetIt
 _i174.GetIt $initGetIt(
@@ -28,5 +30,9 @@ _i174.GetIt $initGetIt(
   gh.lazySingleton<_i667.DioClient>(() => _i667.DioClient());
   gh.lazySingleton<_i693.PostRepository>(
       () => _i693.PostRepository(dio: gh<_i667.DioClient>()));
+  gh.factory<_i87.DetailProvider>(
+      () => _i87.DetailProvider(postRepository: gh<_i693.PostRepository>()));
+  gh.factory<_i716.ListProvider>(
+      () => _i716.ListProvider(postRepository: gh<_i693.PostRepository>()));
   return getIt;
 }

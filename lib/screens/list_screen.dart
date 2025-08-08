@@ -1,64 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:starter/injection/injection.dart';
-import 'package:starter/models/post.dart';
-import 'package:starter/network/post_repository.dart';
+import 'package:starter/providers/list_provider.dart';
 import 'package:starter/widgets/post_item.dart';
 
-class ListScreen extends StatefulWidget {
+class ListScreen extends StatelessWidget {
   const ListScreen({super.key});
-
-  @override
-  State<ListScreen> createState() => _ListScreenState();
-}
-
-class _ListScreenState extends State<ListScreen> {
-  final _posts = <Post>[];
-  bool _isLoading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getPosts();
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: theme.colorScheme.inversePrimary,
-        title: const Text('List'),
+    return ChangeNotifierProvider<ListProvider>(
+      create: (_) => getIt<ListProvider>()..getPosts(),
+      builder: (_, __) => Scaffold(
+        appBar: AppBar(
+          backgroundColor: theme.colorScheme.inversePrimary,
+          title: const Text('List'),
+        ),
+        body: const _ListScreenBody(),
       ),
-      body: _buildList(),
     );
   }
+}
 
-  Future<void> _getPosts() async {
-    setState(() => _isLoading = true);
-    final result = await getIt<PostRepository>().getPosts();
-    setState(() {
-      _isLoading = false;
-      _posts.clear();
-      _posts.addAll(result);
-    });
-  }
+class _ListScreenBody extends StatelessWidget {
+  const _ListScreenBody();
 
-  Widget _buildList() {
-    if (_isLoading) {
+  @override
+  Widget build(BuildContext context) {
+    final provider = context.watch<ListProvider>();
+    final isLoading = provider.isLoading;
+    final posts = provider.posts;
+
+    if (isLoading) {
       return const Center(child: CircularProgressIndicator());
-    } else if (_posts.isEmpty) {
+    } else if (posts.isEmpty) {
       return const Center(child: Text('No todos found'));
     }
 
     return RefreshIndicator(
-      onRefresh: () => _getPosts(),
+      onRefresh: () => provider.getPosts(),
       child: ListView.builder(
-        itemCount: _posts.length,
+        itemCount: posts.length,
         itemBuilder: (_, index) => PostItem(
-          post: _posts[index],
+          post: posts[index],
         ),
       ),
     );
