@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:starter/models/post.dart';
-import 'package:starter/router/app_router.dart';
+import 'package:get/get.dart';
+import 'package:starter/app/data/models/post.dart';
+import 'package:starter/app/routes/app_pages.dart';
 
 class PostItem extends StatelessWidget {
   const PostItem({super.key, this.post});
@@ -25,9 +26,8 @@ class PostItem extends StatelessWidget {
         style: theme.textTheme.bodySmall,
       ),
       onTap: () {
-        Navigator.pushNamed(
-          context,
-          AppRouter.detail,
+        Get.toNamed(
+          Routes.detail,
           arguments: post?.id,
         );
       },

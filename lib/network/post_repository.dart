@@ -1,5 +1,5 @@
 import 'package:injectable/injectable.dart';
-import 'package:starter/models/post.dart';
+import 'package:starter/app/data/models/post.dart';
 import 'package:starter/network/api_endpoints.dart';
 import 'package:starter/network/dio_client.dart';
 
