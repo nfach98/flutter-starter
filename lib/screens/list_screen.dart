@@ -12,12 +12,7 @@ class ListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) {
-        final bloc = getIt<ListBloc>();
-        bloc.add(GetPosts());
-
-        return bloc;
-      },
+      create: (_) => getIt<ListBloc>()..add(GetPosts()),
       child: BlocBuilder<ListBloc, ListState>(
         builder: (context, state) {
           final theme = Theme.of(context);

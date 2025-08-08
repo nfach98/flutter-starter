@@ -13,12 +13,7 @@ class DetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) {
-        final bloc = getIt<DetailBloc>();
-        bloc.add(GetPostDetail(id ?? 0));
-
-        return bloc;
-      },
+      create: (_) => getIt<DetailBloc>()..add(GetPostDetail(id ?? 0)),
       child: BlocBuilder<DetailBloc, DetailState>(
         builder: (context, state) {
           final theme = Theme.of(context);
