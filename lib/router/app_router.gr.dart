@@ -8,18 +8,19 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:auto_route/auto_route.dart' as _i3;
-import 'package:flutter/material.dart' as _i4;
+import 'package:auto_route/auto_route.dart' as _i4;
+import 'package:flutter/material.dart' as _i5;
 import 'package:starter/screens/detail_screen.dart' as _i1;
 import 'package:starter/screens/list_screen.dart' as _i2;
+import 'package:starter/screens/login_screen.dart' as _i3;
 
 /// generated route for
 /// [_i1.DetailScreen]
-class DetailRoute extends _i3.PageRouteInfo<DetailRouteArgs> {
+class DetailRoute extends _i4.PageRouteInfo<DetailRouteArgs> {
   DetailRoute({
-    _i4.Key? key,
+    _i5.Key? key,
     int? id,
-    List<_i3.PageRouteInfo>? children,
+    List<_i4.PageRouteInfo>? children,
   }) : super(
           DetailRoute.name,
           args: DetailRouteArgs(
@@ -31,7 +32,7 @@ class DetailRoute extends _i3.PageRouteInfo<DetailRouteArgs> {
 
   static const String name = 'DetailRoute';
 
-  static _i3.PageInfo page = _i3.PageInfo(
+  static _i4.PageInfo page = _i4.PageInfo(
     name,
     builder: (data) {
       final args =
@@ -50,7 +51,7 @@ class DetailRouteArgs {
     this.id,
   });
 
-  final _i4.Key? key;
+  final _i5.Key? key;
 
   final int? id;
 
@@ -62,8 +63,8 @@ class DetailRouteArgs {
 
 /// generated route for
 /// [_i2.ListScreen]
-class ListRoute extends _i3.PageRouteInfo<void> {
-  const ListRoute({List<_i3.PageRouteInfo>? children})
+class ListRoute extends _i4.PageRouteInfo<void> {
+  const ListRoute({List<_i4.PageRouteInfo>? children})
       : super(
           ListRoute.name,
           initialChildren: children,
@@ -71,10 +72,29 @@ class ListRoute extends _i3.PageRouteInfo<void> {
 
   static const String name = 'ListRoute';
 
-  static _i3.PageInfo page = _i3.PageInfo(
+  static _i4.PageInfo page = _i4.PageInfo(
     name,
     builder: (data) {
       return const _i2.ListScreen();
+    },
+  );
+}
+
+/// generated route for
+/// [_i3.LoginScreen]
+class LoginRoute extends _i4.PageRouteInfo<void> {
+  const LoginRoute({List<_i4.PageRouteInfo>? children})
+      : super(
+          LoginRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'LoginRoute';
+
+  static _i4.PageInfo page = _i4.PageInfo(
+    name,
+    builder: (data) {
+      return const _i3.LoginScreen();
     },
   );
 }
