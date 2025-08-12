@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:starter/models/post.dart';
+import 'package:starter/router/app_router.dart';
 import 'package:starter/widgets/post_item.dart';
 import 'package:starter/riverpod/list_notifier.dart';
 
@@ -16,6 +17,17 @@ class ListScreen extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: theme.colorScheme.inversePrimary,
         title: const Text('List'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await ref.read(listNotifierProvider.notifier).logout();
+              if (context.mounted) {
+                Navigator.pushReplacementNamed(context, AppRouter.login);
+              }
+            },
+          ),
+        ],
       ),
       body: state.when(
         data: (posts) => _buildList(posts, ref),
