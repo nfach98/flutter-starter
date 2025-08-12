@@ -15,6 +15,8 @@ import '../network/dio_client.dart' as _i667;
 import '../network/post_repository.dart' as _i693;
 import '../providers/detail_provider.dart' as _i87;
 import '../providers/list_provider.dart' as _i716;
+import '../providers/login_provider.dart' as _i261;
+import '../utils/shared_preferences.dart' as _i959;
 
 // initializes the registration of main-scope dependencies inside of GetIt
 _i174.GetIt $initGetIt(
@@ -28,11 +30,16 @@ _i174.GetIt $initGetIt(
     environmentFilter,
   );
   gh.lazySingleton<_i667.DioClient>(() => _i667.DioClient());
+  gh.lazySingleton<_i959.SharedPreferences>(() => _i959.SharedPreferences());
+  gh.factory<_i261.LoginProvider>(() =>
+      _i261.LoginProvider(sharedPreferences: gh<_i959.SharedPreferences>()));
   gh.lazySingleton<_i693.PostRepository>(
       () => _i693.PostRepository(dio: gh<_i667.DioClient>()));
   gh.factory<_i87.DetailProvider>(
       () => _i87.DetailProvider(postRepository: gh<_i693.PostRepository>()));
-  gh.factory<_i716.ListProvider>(
-      () => _i716.ListProvider(postRepository: gh<_i693.PostRepository>()));
+  gh.factory<_i716.ListProvider>(() => _i716.ListProvider(
+        postRepository: gh<_i693.PostRepository>(),
+        sharedPreferences: gh<_i959.SharedPreferences>(),
+      ));
   return getIt;
 }

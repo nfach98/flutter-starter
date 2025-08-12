@@ -2,12 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import 'package:starter/models/post.dart';
 import 'package:starter/network/post_repository.dart';
+import 'package:starter/utils/shared_preferences.dart';
 
 @injectable
 class ListProvider extends ChangeNotifier {
   final PostRepository postRepository;
+  final SharedPreferences sharedPreferences;
 
-  ListProvider({required this.postRepository});
+  ListProvider({
+    required this.postRepository,
+    required this.sharedPreferences,
+  });
 
   final List<Post> _posts = [];
   bool _isLoading = false;
@@ -25,5 +30,9 @@ class ListProvider extends ChangeNotifier {
 
     _isLoading = false;
     notifyListeners();
+  }
+
+  Future<void> logout() async {
+    await sharedPreferences.remove('username');
   }
 }

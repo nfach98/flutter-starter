@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:starter/injection/injection.dart';
 import 'package:starter/providers/list_provider.dart';
+import 'package:starter/router/app_router.dart';
 import 'package:starter/widgets/post_item.dart';
 
 class ListScreen extends StatelessWidget {
@@ -17,6 +18,17 @@ class ListScreen extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: theme.colorScheme.inversePrimary,
           title: const Text('List'),
+          actions: [
+            Consumer<ListProvider>(
+              builder: (_, provider, __) => IconButton(
+                icon: const Icon(Icons.logout),
+                onPressed: () {
+                  provider.logout();
+                  Navigator.pushReplacementNamed(context, AppRouter.login);
+                },
+              ),
+            ),
+          ],
         ),
         body: const _ListScreenBody(),
       ),
