@@ -4,6 +4,7 @@ import 'package:starter/bloc/list/list_bloc.dart';
 import 'package:starter/bloc/list/list_event.dart';
 import 'package:starter/bloc/list/list_state.dart';
 import 'package:starter/injection/injection.dart';
+import 'package:starter/router/app_router.dart';
 import 'package:starter/widgets/post_item.dart';
 
 class ListScreen extends StatelessWidget {
@@ -13,21 +14,39 @@ class ListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => getIt<ListBloc>()..add(GetPosts()),
-      child: BlocBuilder<ListBloc, ListState>(
-        builder: (context, state) {
-          final theme = Theme.of(context);
+      child: BlocListener<ListBloc, ListState>(
+        listener: (context, state) {
+          final isLogout = state.isLogout;
 
-          return Scaffold(
-            appBar: AppBar(
-              backgroundColor: theme.colorScheme.inversePrimary,
-              title: const Text('List'),
-            ),
-            body: _buildList(
-              context: context,
-              state: state,
-            ),
-          );
+          if (isLogout) {
+            Navigator.pushReplacementNamed(context, AppRouter.login);
+          }
         },
+        child: BlocBuilder<ListBloc, ListState>(
+          builder: (context, state) {
+            final theme = Theme.of(context);
+            final bloc = BlocProvider.of<ListBloc>(context);
+
+            return Scaffold(
+              appBar: AppBar(
+                backgroundColor: theme.colorScheme.inversePrimary,
+                title: const Text('List'),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.logout),
+                    onPressed: () {
+                      bloc.add(Logout());
+                    },
+                  ),
+                ],
+              ),
+              body: _buildList(
+                context: context,
+                state: state,
+              ),
+            );
+          },
+        ),
       ),
     );
   }
