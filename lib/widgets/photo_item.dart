@@ -17,10 +17,7 @@ class PhotoItem extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 10,
-            vertical: 6,
-          ),
+          padding: const EdgeInsets.all(10),
           child: Row(
             children: [
               CircleAvatar(
@@ -33,9 +30,13 @@ class PhotoItem extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 6),
-              Text(
-                photo?.photographer ?? 'Unknown',
-                style: theme.textTheme.titleSmall,
+              Expanded(
+                child: Text(
+                  photo?.photographer ?? 'Unknown',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.titleSmall,
+                ),
               ),
             ],
           ),

@@ -17,6 +17,7 @@ class _SearchScreenState extends State<SearchScreen> {
   var _page = 1;
   var _totalResults = 0;
   bool _isLoading = false;
+  bool _isWriting = false;
 
   final _scrollController = ScrollController();
   final _searchController = TextEditingController();
@@ -72,8 +73,11 @@ class _SearchScreenState extends State<SearchScreen> {
                 },
               ),
             ],
-            onChanged: (query) {
-              if (query.isNotEmpty) {
+            onChanged: (query) async {
+              if (query.isNotEmpty && !_isWriting) {
+                setState(() => _isWriting = true);
+                await Future.delayed(const Duration(milliseconds: 800));
+                setState(() => _isWriting = false);
                 _resetPhotos();
                 _getPhotos();
               }

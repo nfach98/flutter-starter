@@ -33,24 +33,7 @@ class _DetailScreenState extends State<DetailScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: theme.colorScheme.surface,
-        title: Row(
-          children: [
-            CircleAvatar(
-              radius: 16,
-              backgroundColor: hexToColor(_photo?.avgColor ?? '#FFFFFF'),
-              child: Icon(
-                Icons.person,
-                size: 16,
-                color: theme.colorScheme.onPrimary,
-              ),
-            ),
-            const SizedBox(width: 6),
-            Text(
-              _photo?.photographer ?? 'Unknown',
-              style: theme.textTheme.titleSmall,
-            ),
-          ],
-        ),
+        title: const Text('Detail'),
       ),
       body: _buildPostDetail(),
     );
@@ -87,23 +70,49 @@ class _DetailScreenState extends State<DetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CachedNetworkImage(
-              imageUrl: _photo?.src?.large2x ?? '',
-              fit: BoxFit.cover,
-              placeholder: (_, __) => ColoredBox(
-                color: theme.colorScheme.surfaceContainer,
-                child: Icon(
-                  Icons.image,
-                  size: 48,
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 16,
+                    backgroundColor: hexToColor(_photo?.avgColor ?? '#FFFFFF'),
+                    child: Icon(
+                      Icons.person,
+                      size: 16,
+                      color: theme.colorScheme.onPrimary,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      _photo?.photographer ?? 'Unknown',
+                      style: theme.textTheme.titleSmall,
+                    ),
+                  ),
+                ],
               ),
-              errorWidget: (_, __, ___) => ColoredBox(
-                color: theme.colorScheme.surfaceContainer,
-                child: Icon(
-                  Icons.image,
-                  size: 48,
-                  color: theme.colorScheme.onSurfaceVariant,
+            ),
+            FractionallySizedBox(
+              widthFactor: 1,
+              child: CachedNetworkImage(
+                imageUrl: _photo?.src?.large ?? '',
+                fit: BoxFit.cover,
+                placeholder: (_, __) => ColoredBox(
+                  color: theme.colorScheme.surfaceContainer,
+                  child: Icon(
+                    Icons.image,
+                    size: 48,
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                errorWidget: (_, __, ___) => ColoredBox(
+                  color: theme.colorScheme.surfaceContainer,
+                  child: Icon(
+                    Icons.image,
+                    size: 48,
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ),
             ),

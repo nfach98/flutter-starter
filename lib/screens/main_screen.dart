@@ -34,7 +34,7 @@ class _MainScreenState extends State<MainScreen> {
         },
         backgroundColor: theme.colorScheme.surfaceContainerLowest,
         currentIndex: _currentIndex,
-        selectedItemColor: theme.colorScheme.primary,
+        selectedItemColor: theme.colorScheme.onSurface,
         unselectedItemColor: theme.colorScheme.outlineVariant,
         showSelectedLabels: false,
         showUnselectedLabels: false,
