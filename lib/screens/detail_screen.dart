@@ -70,29 +70,6 @@ class _DetailScreenState extends State<DetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 16,
-                    backgroundColor: hexToColor(_photo?.avgColor ?? '#FFFFFF'),
-                    child: Icon(
-                      Icons.person,
-                      size: 16,
-                      color: theme.colorScheme.onPrimary,
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
-                      _photo?.photographer ?? 'Unknown',
-                      style: theme.textTheme.titleSmall,
-                    ),
-                  ),
-                ],
-              ),
-            ),
             FractionallySizedBox(
               widthFactor: 1,
               child: CachedNetworkImage(
@@ -129,11 +106,29 @@ class _DetailScreenState extends State<DetailScreen> {
                         style: theme.textTheme.bodySmall,
                       ),
                     ),
-                  Text(
-                    '${_photo?.id ?? ''}',
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: theme.colorScheme.outline,
-                    ),
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 10,
+                        backgroundColor: hexToColor(
+                          _photo?.avgColor ?? '#FFFFFF',
+                        ),
+                        child: Icon(
+                          Icons.person,
+                          size: 16,
+                          color: theme.colorScheme.onPrimary,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          _photo?.photographer ?? 'Unknown',
+                          style: theme.textTheme.titleSmall?.copyWith(
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

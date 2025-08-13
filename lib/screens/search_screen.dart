@@ -42,11 +42,14 @@ class _SearchScreenState extends State<SearchScreen> {
     return Scaffold(
       appBar: AppBar(
         title: SizedBox(
-          height: 40,
+          height: 48,
           child: SearchBar(
             controller: _searchController,
             elevation: const WidgetStatePropertyAll(0),
             autoFocus: false,
+            backgroundColor: WidgetStatePropertyAll(
+              theme.colorScheme.surfaceContainerHigh,
+            ),
             textStyle: WidgetStatePropertyAll(
               theme.textTheme.bodyMedium,
             ),

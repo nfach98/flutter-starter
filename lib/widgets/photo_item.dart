@@ -16,31 +16,6 @@ class PhotoItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Padding(
-          padding: const EdgeInsets.all(10),
-          child: Row(
-            children: [
-              CircleAvatar(
-                radius: 16,
-                backgroundColor: hexToColor(photo?.avgColor ?? '#FFFFFF'),
-                child: Icon(
-                  Icons.person,
-                  size: 16,
-                  color: theme.colorScheme.onPrimary,
-                ),
-              ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  photo?.photographer ?? 'Unknown',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.titleSmall,
-                ),
-              ),
-            ],
-          ),
-        ),
         AspectRatio(
           aspectRatio: 1,
           child: CachedNetworkImage(
@@ -77,11 +52,29 @@ class PhotoItem extends StatelessWidget {
                     style: theme.textTheme.bodySmall,
                   ),
                 ),
-              Text(
-                '${photo?.id ?? ''}',
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: theme.colorScheme.outline,
-                ),
+              Row(
+                children: [
+                  CircleAvatar(
+                    radius: 10,
+                    backgroundColor: hexToColor(photo?.avgColor ?? '#FFFFFF'),
+                    child: Icon(
+                      Icons.person,
+                      size: 16,
+                      color: theme.colorScheme.onPrimary,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      photo?.photographer ?? 'Unknown',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

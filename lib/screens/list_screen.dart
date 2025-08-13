@@ -102,7 +102,7 @@ class _ListScreenState extends State<ListScreen> {
       itemBuilder: (_, index) => PhotoItem(
         photo: _photos[index],
       ),
-      separatorBuilder: (_, __) => const SizedBox(height: 10),
+      separatorBuilder: (_, __) => const SizedBox(height: 16),
     );
   }
 }
