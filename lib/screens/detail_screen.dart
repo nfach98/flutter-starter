@@ -1,9 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:color_hex/class/hex_to_color.dart';
 import 'package:flutter/material.dart';
 import 'package:starter/injection/injection.dart';
 import 'package:starter/models/photo.dart';
+import 'package:starter/models/quality.dart';
 import 'package:starter/network/post_repository.dart';
+import 'package:starter/widgets/photo_item.dart';
 
 class DetailScreen extends StatefulWidget {
   const DetailScreen({super.key, this.id});
@@ -51,8 +51,6 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   Widget _buildPostDetail() {
-    final theme = Theme.of(context);
-
     if (_isLoading) {
       return const Center(
         child: CircularProgressIndicator(),
@@ -67,73 +65,9 @@ class _DetailScreenState extends State<DetailScreen> {
       onRefresh: () => _getPhotoDetail(),
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            FractionallySizedBox(
-              widthFactor: 1,
-              child: CachedNetworkImage(
-                imageUrl: _photo?.src?.large ?? '',
-                fit: BoxFit.cover,
-                placeholder: (_, __) => ColoredBox(
-                  color: theme.colorScheme.surfaceContainer,
-                  child: Icon(
-                    Icons.image,
-                    size: 48,
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                ),
-                errorWidget: (_, __, ___) => ColoredBox(
-                  color: theme.colorScheme.surfaceContainer,
-                  child: Icon(
-                    Icons.image,
-                    size: 48,
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (_photo?.alt?.isNotEmpty ?? false)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 6),
-                      child: Text(
-                        _photo?.alt ?? '',
-                        style: theme.textTheme.bodySmall,
-                      ),
-                    ),
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 10,
-                        backgroundColor: hexToColor(
-                          _photo?.avgColor ?? '#FFFFFF',
-                        ),
-                        child: Icon(
-                          Icons.person,
-                          size: 16,
-                          color: theme.colorScheme.onPrimary,
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          _photo?.photographer ?? 'Unknown',
-                          style: theme.textTheme.titleSmall?.copyWith(
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
+        child: PhotoItem(
+          photo: _photo,
+          quality: Quality.large2x,
         ),
       ),
     );

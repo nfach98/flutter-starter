@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:starter/injection/injection.dart';
 import 'package:starter/models/photo.dart';
+import 'package:starter/models/quality.dart';
 import 'package:starter/network/post_repository.dart';
 import 'package:starter/widgets/photo_item.dart';
 
@@ -101,6 +102,7 @@ class _ListScreenState extends State<ListScreen> {
       itemCount: _photos.length,
       itemBuilder: (_, index) => PhotoItem(
         photo: _photos[index],
+        quality: Quality.large,
       ),
       separatorBuilder: (_, __) => const SizedBox(height: 16),
     );

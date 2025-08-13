@@ -47,6 +47,7 @@ class _SearchScreenState extends State<SearchScreen> {
             controller: _searchController,
             elevation: const WidgetStatePropertyAll(0),
             autoFocus: false,
+            onTapOutside: (_) => FocusScope.of(context).unfocus(),
             backgroundColor: WidgetStatePropertyAll(
               theme.colorScheme.surfaceContainerHigh,
             ),
@@ -88,27 +89,24 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         ),
       ),
-      body: GestureDetector(
-        onTapDown: (_) => FocusScope.of(context).unfocus(),
-        child: RefreshIndicator(
-          onRefresh: () async {
-            _resetPhotos();
-            _getPhotos();
-          },
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            child: Column(
-              children: [
-                _buildList(),
-                if (_photos.length < _totalResults)
-                  const Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          _resetPhotos();
+          _getPhotos();
+        },
+        child: SingleChildScrollView(
+          controller: _scrollController,
+          child: Column(
+            children: [
+              _buildList(),
+              if (_photos.length < _totalResults)
+                const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Center(
+                    child: CircularProgressIndicator(),
                   ),
-              ],
-            ),
+                ),
+            ],
           ),
         ),
       ),
