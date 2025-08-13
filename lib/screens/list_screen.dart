@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:starter/injection/injection.dart';
-import 'package:starter/models/post.dart';
+import 'package:starter/models/photo.dart';
 import 'package:starter/network/post_repository.dart';
-import 'package:starter/router/app_router.dart';
-import 'package:starter/utils/shared_preferences.dart';
-import 'package:starter/widgets/post_item.dart';
+import 'package:starter/widgets/photo_item.dart';
 
 class ListScreen extends StatefulWidget {
   const ListScreen({super.key});
@@ -14,68 +12,97 @@ class ListScreen extends StatefulWidget {
 }
 
 class _ListScreenState extends State<ListScreen> {
-  final _posts = <Post>[];
+  final _photos = <Photo>[];
+  var _page = 1;
+  var _totalResults = 0;
   bool _isLoading = false;
+
+  final _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getPosts();
+      _getPhotos();
+      _scrollController.addListener(() {
+        final pos = _scrollController.position;
+        if (pos.pixels == pos.maxScrollExtent && !_isLoading) {
+          _getPhotos();
+        }
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: theme.colorScheme.inversePrimary,
-        title: const Text('List'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await _logout();
-            },
+      body: SafeArea(
+        child: RefreshIndicator(
+          onRefresh: () async {
+            _resetPhotos();
+            _getPhotos();
+          },
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            child: Column(
+              children: [
+                AppBar(
+                  title: const Text('Curated'),
+                  centerTitle: true,
+                ),
+                _buildList(),
+                if (_photos.length < _totalResults)
+                  const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+              ],
+            ),
           ),
-        ],
+        ),
       ),
-      body: _buildList(),
     );
   }
 
-  Future<void> _getPosts() async {
+  Future<void> _getPhotos() async {
     setState(() => _isLoading = true);
-    final result = await getIt<PostRepository>().getPosts();
+    final result = await getIt<PostRepository>().getPhotos(
+      page: _page,
+      perPage: 12,
+    );
     setState(() {
       _isLoading = false;
-      _posts.clear();
-      _posts.addAll(result);
+      _photos.addAll(result.photos ?? []);
+      _page = _page + 1;
+      _totalResults = result.totalResults ?? 0;
     });
   }
 
-  Future<void> _logout() async {
-    getIt<SharedPreferences>().remove('username');
-    Navigator.pushReplacementNamed(context, AppRouter.login);
+  _resetPhotos() {
+    setState(() {
+      _photos.clear();
+      _page = 1;
+      _totalResults = 0;
+    });
   }
 
   Widget _buildList() {
-    if (_isLoading) {
+    if (_isLoading && _page == 1) {
       return const Center(child: CircularProgressIndicator());
-    } else if (_posts.isEmpty) {
+    } else if (_photos.isEmpty) {
       return const Center(child: Text('No todos found'));
     }
 
-    return RefreshIndicator(
-      onRefresh: () => _getPosts(),
-      child: ListView.builder(
-        itemCount: _posts.length,
-        itemBuilder: (_, index) => PostItem(
-          post: _posts[index],
-        ),
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: _photos.length,
+      itemBuilder: (_, index) => PhotoItem(
+        photo: _photos[index],
       ),
+      separatorBuilder: (_, __) => const SizedBox(height: 10),
     );
   }
 }
