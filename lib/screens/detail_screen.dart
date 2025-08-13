@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:color_hex/class/hex_to_color.dart';
 import 'package:flutter/material.dart';
 import 'package:starter/injection/injection.dart';
-import 'package:starter/models/post.dart';
+import 'package:starter/models/photo.dart';
 import 'package:starter/network/post_repository.dart';
 
 class DetailScreen extends StatefulWidget {
@@ -13,14 +15,14 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
-  Post? _post;
+  Photo? _photo;
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getPostDetail();
+      _getPhotoDetail();
     });
   }
 
@@ -30,19 +32,38 @@ class _DetailScreenState extends State<DetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: theme.colorScheme.inversePrimary,
-        title: const Text('Detail'),
+        backgroundColor: theme.colorScheme.surface,
+        title: Row(
+          children: [
+            CircleAvatar(
+              radius: 16,
+              backgroundColor: hexToColor(_photo?.avgColor ?? '#FFFFFF'),
+              child: Icon(
+                Icons.person,
+                size: 16,
+                color: theme.colorScheme.onPrimary,
+              ),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              _photo?.photographer ?? 'Unknown',
+              style: theme.textTheme.titleSmall,
+            ),
+          ],
+        ),
       ),
       body: _buildPostDetail(),
     );
   }
 
-  Future<void> _getPostDetail() async {
+  Future<void> _getPhotoDetail() async {
     setState(() => _isLoading = true);
-    final result = await getIt<PostRepository>().getPostDetail(widget.id ?? 0);
+    final result = await getIt<PostRepository>().getPhotoDetail(
+      widget.id ?? 0,
+    );
     setState(() {
       _isLoading = false;
-      _post = result;
+      _photo = result;
     });
   }
 
@@ -53,28 +74,60 @@ class _DetailScreenState extends State<DetailScreen> {
       return const Center(
         child: CircularProgressIndicator(),
       );
-    } else if (_post == null) {
+    } else if (_photo == null) {
       return const Center(
         child: Text('Post not found'),
       );
     }
 
     return RefreshIndicator(
-      onRefresh: () => _getPostDetail(),
+      onRefresh: () => _getPhotoDetail(),
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              _post?.title ?? '',
-              style: theme.textTheme.titleMedium,
+            CachedNetworkImage(
+              imageUrl: _photo?.src?.large2x ?? '',
+              fit: BoxFit.cover,
+              placeholder: (_, __) => ColoredBox(
+                color: theme.colorScheme.surfaceContainer,
+                child: Icon(
+                  Icons.image,
+                  size: 48,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              errorWidget: (_, __, ___) => ColoredBox(
+                color: theme.colorScheme.surfaceContainer,
+                child: Icon(
+                  Icons.image,
+                  size: 48,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
             ),
-            const SizedBox(height: 10),
-            Text(
-              _post?.body ?? '',
-              style: theme.textTheme.bodyMedium,
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (_photo?.alt?.isNotEmpty ?? false)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 6),
+                      child: Text(
+                        _photo?.alt ?? '',
+                        style: theme.textTheme.bodySmall,
+                      ),
+                    ),
+                  Text(
+                    '${_photo?.id ?? ''}',
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: theme.colorScheme.outline,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
