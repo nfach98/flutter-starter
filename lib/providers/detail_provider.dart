@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
-import 'package:starter/models/post.dart';
+import 'package:starter/models/photo.dart';
 import 'package:starter/network/post_repository.dart';
 
 @injectable
@@ -9,18 +9,18 @@ class DetailProvider extends ChangeNotifier {
 
   DetailProvider({required this.postRepository});
 
-  Post? _post;
+  Photo? _photo;
   bool _isLoading = false;
 
-  Post? get post => _post;
+  Photo? get photo => _photo;
   bool get isLoading => _isLoading;
 
   Future<void> getPostDetail(int id) async {
     _isLoading = true;
     notifyListeners();
 
-    final result = await postRepository.getPostDetail(id);
-    _post = result;
+    final result = await postRepository.getPhotoDetail(id);
+    _photo = result;
 
     _isLoading = false;
     notifyListeners();

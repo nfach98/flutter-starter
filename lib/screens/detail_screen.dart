@@ -1,3 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:color_hex/class/hex_to_color.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:starter/injection/injection.dart';
@@ -10,17 +12,51 @@ class DetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return ChangeNotifierProvider<DetailProvider>(
       create: (_) => getIt<DetailProvider>()..getPostDetail(id ?? 0),
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: theme.colorScheme.inversePrimary,
-          title: const Text('Detail'),
+        appBar: const PreferredSize(
+          preferredSize: Size.fromHeight(kToolbarHeight),
+          child: _DetailAppBar(),
         ),
         body: _DetailBody(id),
       ),
+    );
+  }
+}
+
+class _DetailAppBar extends StatelessWidget {
+  const _DetailAppBar();
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<DetailProvider>(
+      builder: (_, provider, __) {
+        final theme = Theme.of(context);
+        final photo = provider.photo;
+
+        return AppBar(
+          backgroundColor: theme.colorScheme.surface,
+          title: Row(
+            children: [
+              CircleAvatar(
+                radius: 16,
+                backgroundColor: hexToColor(photo?.avgColor ?? '#FFFFFF'),
+                child: Icon(
+                  Icons.person,
+                  size: 16,
+                  color: theme.colorScheme.onPrimary,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                photo?.photographer ?? 'Unknown',
+                style: theme.textTheme.titleSmall,
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -36,13 +72,13 @@ class _DetailBody extends StatelessWidget {
       builder: (_, provider, __) {
         final theme = Theme.of(context);
         final isLoading = provider.isLoading;
-        final post = provider.post;
+        final photo = provider.photo;
 
         if (isLoading) {
           return const Center(
             child: CircularProgressIndicator(),
           );
-        } else if (post == null) {
+        } else if (photo == null) {
           return const Center(
             child: Text('Post not found'),
           );
@@ -52,18 +88,50 @@ class _DetailBody extends StatelessWidget {
           onRefresh: () => provider.getPostDetail(id ?? 0),
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  post.title ?? '',
-                  style: theme.textTheme.titleMedium,
+                CachedNetworkImage(
+                  imageUrl: photo.src?.large2x ?? '',
+                  fit: BoxFit.cover,
+                  placeholder: (_, __) => ColoredBox(
+                    color: theme.colorScheme.surfaceContainer,
+                    child: Icon(
+                      Icons.image,
+                      size: 48,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  errorWidget: (_, __, ___) => ColoredBox(
+                    color: theme.colorScheme.surfaceContainer,
+                    child: Icon(
+                      Icons.image,
+                      size: 48,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 10),
-                Text(
-                  post.body ?? '',
-                  style: theme.textTheme.bodyMedium,
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (photo.alt?.isNotEmpty ?? false)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 6),
+                          child: Text(
+                            photo.alt ?? '',
+                            style: theme.textTheme.bodySmall,
+                          ),
+                        ),
+                      Text(
+                        '${photo.id ?? ''}',
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: theme.colorScheme.outline,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

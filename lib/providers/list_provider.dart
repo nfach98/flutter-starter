@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
-import 'package:starter/models/post.dart';
+import 'package:starter/models/photo.dart';
 import 'package:starter/network/post_repository.dart';
 import 'package:starter/utils/shared_preferences.dart';
 
@@ -14,19 +14,26 @@ class ListProvider extends ChangeNotifier {
     required this.sharedPreferences,
   });
 
-  final List<Post> _posts = [];
+  final List<Photo> _posts = [];
   bool _isLoading = false;
+  int _page = 1;
+  int _totalResults = 0;
 
-  List<Post> get posts => List.unmodifiable(_posts);
+  List<Photo> get posts => List.unmodifiable(_posts);
   bool get isLoading => _isLoading;
 
-  Future<void> getPosts() async {
+  Future<void> getPhotos() async {
     _isLoading = true;
     notifyListeners();
 
-    final result = await postRepository.getPosts();
+    final result = await postRepository.getPhotos(
+      page: _page,
+      perPage: 12,
+    );
     _posts.clear();
-    _posts.addAll(result);
+    _posts.addAll(result.photos ?? []);
+    _page = _page + 1;
+    _totalResults = result.totalResults ?? 0;
 
     _isLoading = false;
     notifyListeners();

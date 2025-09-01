@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:starter/injection/injection.dart';
 import 'package:starter/screens/detail_screen.dart';
-import 'package:starter/screens/list_screen.dart';
 import 'package:starter/screens/login_screen.dart';
+import 'package:starter/screens/main_screen.dart';
 import 'package:starter/utils/shared_preferences.dart';
 
 class AppRouter {
@@ -20,7 +20,7 @@ class AppRouter {
               final isAuth = snapshot.data?.isNotEmpty ?? false;
 
               if (isAuth) {
-                return const ListScreen();
+                return const MainScreen();
               } else {
                 return const LoginScreen();
               }

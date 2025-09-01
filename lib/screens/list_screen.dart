@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:starter/injection/injection.dart';
 import 'package:starter/providers/list_provider.dart';
 import 'package:starter/router/app_router.dart';
-import 'package:starter/widgets/post_item.dart';
+import 'package:starter/widgets/photo_item.dart';
 
 class ListScreen extends StatelessWidget {
   const ListScreen({super.key});
@@ -13,7 +13,7 @@ class ListScreen extends StatelessWidget {
     final theme = Theme.of(context);
 
     return ChangeNotifierProvider<ListProvider>(
-      create: (_) => getIt<ListProvider>()..getPosts(),
+      create: (_) => getIt<ListProvider>()..getPhotos(),
       builder: (_, __) => Scaffold(
         appBar: AppBar(
           backgroundColor: theme.colorScheme.inversePrimary,
@@ -53,11 +53,11 @@ class _ListScreenBody extends StatelessWidget {
         }
 
         return RefreshIndicator(
-          onRefresh: () => provider.getPosts(),
+          onRefresh: () => provider.getPhotos(),
           child: ListView.builder(
             itemCount: posts.length,
-            itemBuilder: (_, index) => PostItem(
-              post: posts[index],
+            itemBuilder: (_, index) => PhotoItem(
+              photo: posts[index],
             ),
           ),
         );
