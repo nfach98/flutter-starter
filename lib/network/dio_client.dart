@@ -8,12 +8,14 @@ class DioClient {
   late final Dio _dio;
 
   DioClient() {
+    const apiKey = 'cDTCoX1qRCgrKheYXSDWgSnzVKdM5yYUEDTKr88VmOCkTTEXvYnPaXG1';
     final options = BaseOptions(
       baseUrl: ApiEndpoints.baseUrl,
       connectTimeout: const Duration(seconds: 5),
       receiveTimeout: const Duration(seconds: 5),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': apiKey,
       },
     );
     _dio = Dio(options);
