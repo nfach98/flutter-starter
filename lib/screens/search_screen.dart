@@ -80,7 +80,7 @@ class _SearchScreenState extends State<SearchScreen> {
             onChanged: (query) async {
               if (query.isNotEmpty && !_isWriting) {
                 setState(() => _isWriting = true);
-                await Future.delayed(const Duration(milliseconds: 800));
+                await Future.delayed(const Duration(milliseconds: 1000));
                 setState(() => _isWriting = false);
                 _resetPhotos();
                 _getPhotos();

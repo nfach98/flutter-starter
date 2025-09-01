@@ -67,7 +67,7 @@ class _DetailScreenState extends State<DetailScreen> {
         physics: const AlwaysScrollableScrollPhysics(),
         child: PhotoItem(
           photo: _photo,
-          quality: Quality.large2x,
+          quality: Quality.large,
         ),
       ),
     );

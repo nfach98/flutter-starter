@@ -3,6 +3,7 @@ import 'package:color_hex/class/hex_to_color.dart';
 import 'package:flutter/material.dart';
 import 'package:starter/models/photo.dart';
 import 'package:starter/models/quality.dart';
+import 'package:starter/widgets/photo_placeholder.dart';
 
 class PhotoItem extends StatelessWidget {
   const PhotoItem({
@@ -37,21 +38,13 @@ class PhotoItem extends StatelessWidget {
           child: CachedNetworkImage(
             imageUrl: imageUrl ?? '',
             fit: BoxFit.cover,
-            placeholder: (_, __) => ColoredBox(
-              color: theme.colorScheme.surfaceContainer,
-              child: Icon(
-                Icons.image,
-                size: 48,
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
+            placeholder: (_, __) => const AspectRatio(
+              aspectRatio: 1,
+              child: PhotoPlaceholder(),
             ),
-            errorWidget: (_, __, ___) => ColoredBox(
-              color: theme.colorScheme.surfaceContainer,
-              child: Icon(
-                Icons.image,
-                size: 48,
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
+            errorWidget: (_, __, ___) => const AspectRatio(
+              aspectRatio: 1,
+              child: PhotoPlaceholder(),
             ),
           ),
         ),
@@ -75,7 +68,7 @@ class PhotoItem extends StatelessWidget {
                     backgroundColor: hexToColor(photo?.avgColor ?? '#FFFFFF'),
                     child: Icon(
                       Icons.person,
-                      size: 16,
+                      size: 10,
                       color: theme.colorScheme.onPrimary,
                     ),
                   ),
