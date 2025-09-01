@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:starter/injection/injection.dart';
-import 'package:starter/models/post.dart';
+import 'package:starter/models/photo.dart';
+import 'package:starter/models/quality.dart';
 import 'package:starter/network/post_repository.dart';
+import 'package:starter/widgets/photo_item.dart';
 
 class DetailScreen extends StatefulWidget {
   const DetailScreen({super.key, this.id});
@@ -13,14 +15,14 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
-  Post? _post;
+  Photo? _photo;
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getPostDetail();
+      _getPhotoDetail();
     });
   }
 
@@ -30,53 +32,42 @@ class _DetailScreenState extends State<DetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: theme.colorScheme.inversePrimary,
+        backgroundColor: theme.colorScheme.surface,
         title: const Text('Detail'),
       ),
       body: _buildPostDetail(),
     );
   }
 
-  Future<void> _getPostDetail() async {
+  Future<void> _getPhotoDetail() async {
     setState(() => _isLoading = true);
-    final result = await getIt<PostRepository>().getPostDetail(widget.id ?? 0);
+    final result = await getIt<PostRepository>().getPhotoDetail(
+      widget.id ?? 0,
+    );
     setState(() {
       _isLoading = false;
-      _post = result;
+      _photo = result;
     });
   }
 
   Widget _buildPostDetail() {
-    final theme = Theme.of(context);
-
     if (_isLoading) {
       return const Center(
         child: CircularProgressIndicator(),
       );
-    } else if (_post == null) {
+    } else if (_photo == null) {
       return const Center(
         child: Text('Post not found'),
       );
     }
 
     return RefreshIndicator(
-      onRefresh: () => _getPostDetail(),
+      onRefresh: () => _getPhotoDetail(),
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              _post?.title ?? '',
-              style: theme.textTheme.titleMedium,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              _post?.body ?? '',
-              style: theme.textTheme.bodyMedium,
-            ),
-          ],
+        child: PhotoItem(
+          photo: _photo,
+          quality: Quality.large,
         ),
       ),
     );

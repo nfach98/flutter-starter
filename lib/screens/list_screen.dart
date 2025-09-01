@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:starter/injection/injection.dart';
-import 'package:starter/models/post.dart';
+import 'package:starter/models/photo.dart';
 import 'package:starter/network/post_repository.dart';
 import 'package:starter/router/app_router.dart';
 import 'package:starter/utils/shared_preferences.dart';
-import 'package:starter/widgets/post_item.dart';
+import 'package:starter/widgets/photo_item.dart';
 
 class ListScreen extends StatefulWidget {
   const ListScreen({super.key});
@@ -15,8 +15,10 @@ class ListScreen extends StatefulWidget {
 }
 
 class _ListScreenState extends State<ListScreen> {
-  final _posts = <Post>[];
+  final _photos = <Photo>[];
   bool _isLoading = false;
+  var _page = 1;
+  var _totalResults = 0;
 
   @override
   void initState() {
@@ -49,11 +51,16 @@ class _ListScreenState extends State<ListScreen> {
 
   Future<void> _getPosts() async {
     setState(() => _isLoading = true);
-    final result = await getIt<PostRepository>().getPosts();
+    final result = await getIt<PostRepository>().getPhotos(
+      page: _page,
+      perPage: 12,
+    );
     setState(() {
       _isLoading = false;
-      _posts.clear();
-      _posts.addAll(result);
+      _photos.clear();
+      _photos.addAll(result.photos ?? []);
+      _page = _page + 1;
+      _totalResults = result.totalResults ?? 0;
     });
   }
 
@@ -65,16 +72,16 @@ class _ListScreenState extends State<ListScreen> {
   Widget _buildList() {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
-    } else if (_posts.isEmpty) {
+    } else if (_photos.isEmpty) {
       return const Center(child: Text('No todos found'));
     }
 
     return RefreshIndicator(
       onRefresh: () => _getPosts(),
       child: ListView.builder(
-        itemCount: _posts.length,
-        itemBuilder: (_, index) => PostItem(
-          post: _posts[index],
+        itemCount: _photos.length,
+        itemBuilder: (_, index) => PhotoItem(
+          photo: _photos[index],
         ),
       ),
     );

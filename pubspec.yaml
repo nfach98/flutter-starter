@@ -7,6 +7,8 @@ environment:
   sdk: ^3.5.3
 
 dependencies:
+  cached_network_image: ^3.4.1
+  color_hex: ^0.0.1
   cupertino_icons: ^1.0.8
   dio: ^5.8.0+1
   flutter:
