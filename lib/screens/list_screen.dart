@@ -1,93 +1,98 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:starter/models/post.dart';
-import 'package:starter/router/app_router.dart';
-import 'package:starter/widgets/post_item.dart';
+import 'package:starter/models/photo.dart';
+import 'package:starter/models/quality.dart';
 import 'package:starter/riverpod/list_notifier.dart';
+import 'package:starter/widgets/photo_item.dart';
 
-class ListScreen extends ConsumerWidget {
+class ListScreen extends ConsumerStatefulWidget {
   const ListScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
+  ConsumerState<ListScreen> createState() => _ListScreenState();
+}
+
+class _ListScreenState extends ConsumerState<ListScreen> {
+  final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    final pos = _scrollController.position;
+    final isLoading = ref.read(listNotifierProvider).isLoading;
+    if (pos.pixels == pos.maxScrollExtent && !isLoading) {
+      ref.read(listNotifierProvider.notifier).getPhotos();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final state = ref.watch(listNotifierProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: theme.colorScheme.inversePrimary,
-        title: const Text('List'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await ref.read(listNotifierProvider.notifier).logout();
-              if (context.mounted) {
-                Navigator.pushReplacementNamed(context, AppRouter.login);
-              }
-            },
-          ),
-        ],
-      ),
-      body: state.when(
-        data: (posts) => _buildList(posts, ref),
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(child: Text('Error: $error')),
-      ),
-    );
-  }
+      body: SafeArea(
+        child: state.when(
+          data: (posts) {
+            final photos = posts?.photos ?? [];
+            final totalResults = posts?.totalResults ?? 0;
 
-  Widget _buildList(List<Post> posts, WidgetRef ref) {
-    if (posts.isEmpty) {
-      return const Center(child: Text('No todos found'));
-    }
-
-    return RefreshIndicator(
-      onRefresh: () => ref.read(listNotifierProvider.notifier).fetchPosts(),
-      child: ListView.builder(
-        itemCount: posts.length,
-        itemBuilder: (_, index) => PostItem(
-          post: posts[index],
+            return RefreshIndicator(
+              onRefresh: () async {
+                ref.read(listNotifierProvider.notifier).resetPhotos();
+                await ref.read(listNotifierProvider.notifier).getPhotos();
+              },
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                child: Column(
+                  children: [
+                    AppBar(
+                      title: const Text('Curated'),
+                      centerTitle: true,
+                    ),
+                    _buildList(photos),
+                    if (photos.length < totalResults)
+                      const Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            );
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stack) => Center(child: Text('Error: $error')),
         ),
       ),
     );
   }
 
-  Future<void> _getPhotos() async {
-    setState(() => _isLoading = true);
-    final result = await getIt<PostRepository>().getPhotos(
-      page: _page,
-      perPage: 12,
-    );
-    setState(() {
-      _isLoading = false;
-      _photos.addAll(result.photos ?? []);
-      _page = _page + 1;
-      _totalResults = result.totalResults ?? 0;
-    });
-  }
-
-  _resetPhotos() {
-    setState(() {
-      _photos.clear();
-      _page = 1;
-      _totalResults = 0;
-    });
-  }
-
-  Widget _buildList() {
-    if (_isLoading && _page == 1) {
-      return const Center(child: CircularProgressIndicator());
-    } else if (_photos.isEmpty) {
-      return const Center(child: Text('No todos found'));
+  Widget _buildList(List<Photo> photos) {
+    if (photos.isEmpty) {
+      return const Center(
+        child: Text('No photos found'),
+      );
     }
 
     return ListView.separated(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: _photos.length,
+      itemCount: photos.length,
       itemBuilder: (_, index) => PhotoItem(
-        photo: _photos[index],
+        photo: photos[index],
         quality: Quality.large,
       ),
       separatorBuilder: (_, __) => const SizedBox(height: 16),

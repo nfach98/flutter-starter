@@ -1,6 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:starter/models/photo.dart';
-import 'package:starter/models/post.dart';
+import 'package:starter/models/list_state.dart';
 import 'package:starter/network/post_repository.dart';
 import 'package:starter/utils/shared_preferences.dart';
 
@@ -12,23 +11,36 @@ class ListNotifier extends _$ListNotifier {
   late SharedPreferences _sharedPreferences;
 
   @override
-  Future<List<Photo>> build() async {
+  Future<ListState?> build() async {
     state = const AsyncLoading();
     _postRepository = ref.watch(postRepositoryProvider);
     _sharedPreferences = ref.watch(sharedPreferencesProvider);
-    fetchPosts();
-    return state.value ?? [];
+    getPhotos();
+    return state.value ?? ListState.initial();
   }
 
-  Future<void> fetchPosts() async {
-    state = const AsyncLoading();
-
-    try {
-      final photos = await _postRepository.getPhotos();
-      state = AsyncData(photos);
-    } catch (e) {
-      state = AsyncError(e, StackTrace.current);
+  Future<void> getPhotos() async {
+    if (state.value?.page == 1) {
+      state = const AsyncLoading();
     }
+
+    final result = await _postRepository.getPhotos(
+      page: state.value?.page ?? 1,
+      perPage: 12,
+    );
+
+    final photos = [...?state.value?.photos, ...?result.photos];
+    state = AsyncData(
+      state.value?.copyWith(
+        photos: photos,
+        page: (state.value?.page ?? 1) + 1,
+        totalResults: result.totalResults ?? 0,
+      ),
+    );
+  }
+
+  void resetPhotos() {
+    state = AsyncData(ListState.initial());
   }
 
   Future<void> logout() async {
