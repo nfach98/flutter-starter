@@ -52,4 +52,45 @@ class ListScreen extends ConsumerWidget {
       ),
     );
   }
+
+  Future<void> _getPhotos() async {
+    setState(() => _isLoading = true);
+    final result = await getIt<PostRepository>().getPhotos(
+      page: _page,
+      perPage: 12,
+    );
+    setState(() {
+      _isLoading = false;
+      _photos.addAll(result.photos ?? []);
+      _page = _page + 1;
+      _totalResults = result.totalResults ?? 0;
+    });
+  }
+
+  _resetPhotos() {
+    setState(() {
+      _photos.clear();
+      _page = 1;
+      _totalResults = 0;
+    });
+  }
+
+  Widget _buildList() {
+    if (_isLoading && _page == 1) {
+      return const Center(child: CircularProgressIndicator());
+    } else if (_photos.isEmpty) {
+      return const Center(child: Text('No todos found'));
+    }
+
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: _photos.length,
+      itemBuilder: (_, index) => PhotoItem(
+        photo: _photos[index],
+        quality: Quality.large,
+      ),
+      separatorBuilder: (_, __) => const SizedBox(height: 16),
+    );
+  }
 }

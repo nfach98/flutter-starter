@@ -1,5 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:starter/models/post.dart';
+import 'package:starter/models/photo.dart';
 import 'package:starter/network/post_repository.dart';
 
 part 'detail_notifier.g.dart';
@@ -9,7 +9,7 @@ class DetailNotifier extends _$DetailNotifier {
   late PostRepository _postRepository;
 
   @override
-  Future<Post?> build(int id) async {
+  Future<Photo?> build(int id) async {
     state = const AsyncLoading();
     _postRepository = ref.watch(postRepositoryProvider);
     fetchPostDetail(id);
@@ -20,8 +20,8 @@ class DetailNotifier extends _$DetailNotifier {
     state = const AsyncLoading();
 
     try {
-      final post = await _postRepository.getPostDetail(id);
-      state = AsyncData(post);
+      final photo = await _postRepository.getPhotoDetail(id);
+      state = AsyncData(photo);
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
     }

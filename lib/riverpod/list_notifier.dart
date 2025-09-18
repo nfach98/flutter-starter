@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:starter/models/photo.dart';
 import 'package:starter/models/post.dart';
 import 'package:starter/network/post_repository.dart';
 import 'package:starter/utils/shared_preferences.dart';
@@ -11,7 +12,7 @@ class ListNotifier extends _$ListNotifier {
   late SharedPreferences _sharedPreferences;
 
   @override
-  Future<List<Post>> build() async {
+  Future<List<Photo>> build() async {
     state = const AsyncLoading();
     _postRepository = ref.watch(postRepositoryProvider);
     _sharedPreferences = ref.watch(sharedPreferencesProvider);
@@ -23,8 +24,8 @@ class ListNotifier extends _$ListNotifier {
     state = const AsyncLoading();
 
     try {
-      final posts = await _postRepository.getPosts();
-      state = AsyncData(posts);
+      final photos = await _postRepository.getPhotos();
+      state = AsyncData(photos);
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
     }
