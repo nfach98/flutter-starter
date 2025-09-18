@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:starter/models/quality.dart';
 import 'package:starter/riverpod/detail_notifier.dart';
+import 'package:starter/widgets/photo_item.dart';
 
 class DetailScreen extends ConsumerWidget {
   const DetailScreen({super.key, this.id});
@@ -19,15 +21,14 @@ class DetailScreen extends ConsumerWidget {
   }
 
   Widget _buildPostDetail(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     final state = ref.watch(detailNotifierProvider(id ?? 0));
     final notifier = ref.read(detailNotifierProvider(id ?? 0).notifier);
 
     return state.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stack) => Center(child: Text(error.toString())),
-      data: (post) {
-        if (post == null) {
+      data: (photo) {
+        if (photo == null) {
           return const Center(
             child: Text('Post not found'),
           );
@@ -37,20 +38,9 @@ class DetailScreen extends ConsumerWidget {
           onRefresh: () => notifier.fetchPostDetail(id ?? 0),
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  post.title ?? '',
-                  style: theme.textTheme.titleMedium,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  post.body ?? '',
-                  style: theme.textTheme.bodyMedium,
-                ),
-              ],
+            child: PhotoItem(
+              photo: photo,
+              quality: Quality.large,
             ),
           ),
         );

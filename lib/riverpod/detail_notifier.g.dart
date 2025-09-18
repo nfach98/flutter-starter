@@ -6,7 +6,7 @@ part of 'detail_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$detailNotifierHash() => r'986bef7717b54c44dbdfbdb95d769684a012857b';
+String _$detailNotifierHash() => r'b464e9ff94c5ab300b9015a8a077d3bff4e56698';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -30,10 +30,10 @@ class _SystemHash {
 }
 
 abstract class _$DetailNotifier
-    extends BuildlessAutoDisposeAsyncNotifier<Post?> {
+    extends BuildlessAutoDisposeAsyncNotifier<Photo?> {
   late final int id;
 
-  FutureOr<Post?> build(
+  FutureOr<Photo?> build(
     int id,
   );
 }
@@ -43,7 +43,7 @@ abstract class _$DetailNotifier
 const detailNotifierProvider = DetailNotifierFamily();
 
 /// See also [DetailNotifier].
-class DetailNotifierFamily extends Family<AsyncValue<Post?>> {
+class DetailNotifierFamily extends Family<AsyncValue<Photo?>> {
   /// See also [DetailNotifier].
   const DetailNotifierFamily();
 
@@ -82,7 +82,7 @@ class DetailNotifierFamily extends Family<AsyncValue<Post?>> {
 
 /// See also [DetailNotifier].
 class DetailNotifierProvider
-    extends AutoDisposeAsyncNotifierProviderImpl<DetailNotifier, Post?> {
+    extends AutoDisposeAsyncNotifierProviderImpl<DetailNotifier, Photo?> {
   /// See also [DetailNotifier].
   DetailNotifierProvider(
     int id,
@@ -113,7 +113,7 @@ class DetailNotifierProvider
   final int id;
 
   @override
-  FutureOr<Post?> runNotifierBuild(
+  FutureOr<Photo?> runNotifierBuild(
     covariant DetailNotifier notifier,
   ) {
     return notifier.build(
@@ -138,7 +138,7 @@ class DetailNotifierProvider
   }
 
   @override
-  AutoDisposeAsyncNotifierProviderElement<DetailNotifier, Post?>
+  AutoDisposeAsyncNotifierProviderElement<DetailNotifier, Photo?>
       createElement() {
     return _DetailNotifierProviderElement(this);
   }
@@ -159,13 +159,13 @@ class DetailNotifierProvider
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin DetailNotifierRef on AutoDisposeAsyncNotifierProviderRef<Post?> {
+mixin DetailNotifierRef on AutoDisposeAsyncNotifierProviderRef<Photo?> {
   /// The parameter `id` of this provider.
   int get id;
 }
 
 class _DetailNotifierProviderElement
-    extends AutoDisposeAsyncNotifierProviderElement<DetailNotifier, Post?>
+    extends AutoDisposeAsyncNotifierProviderElement<DetailNotifier, Photo?>
     with DetailNotifierRef {
   _DetailNotifierProviderElement(super.provider);
 
